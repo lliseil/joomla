@@ -1,0 +1,99 @@
+<h1 class="title">Customization</h1>
+
+<p class="article-lead">Find out how to add your own customizations and learn more about file hierarchy in Warp.</p>
+
+<p>To provide as much flexibility as possible, Warp applies a special file cascade. If you include any file like CSS, JS or template PHP files, Warp looks successively in specific folders for the files and the first file found will be loaded. This gives you full flexibility to override any important theme related file.</p>
+
+<p>We will explain the override cascade a bit further. If you just want to know, how to override theme files, jump down to the appropriate examples.</p>
+
+<h2>Override cascade</h2>
+
+<p>As an example, this is what the override hierarchy for the <code>/layouts</code> folder would look like.</p>
+
+<h3>1. Styles folder</h3>
+
+<p>The <code>/styles/STYLE-NAME/layouts</code> folder of your theme is at the top of the hierarchy and modifications or additions you make here will override all other theme files. Also this folder will be preserved during updates, so it's the safest place to make your modifications.</p>
+
+<h3>2. Theme folder</h3>
+
+<p>The theme's <code>/layouts</code> folder is the place where all the theme specific layout files are being stored.</p>
+
+<h3>3. Systems folder</h3>
+
+<p>The <code>/warp/systems/joomla/layouts</code> or <code>/warp/systems/wordpress/layouts</code> folder provides the individual system implementation needed to integrate with a particular CMS. This layer makes Warp adapt to a certain system to form a consistent API for theme development. </p>
+
+<h3>4. Warp folder</h3>
+
+<p>The <code>/warp/layouts</code> folder contains basic overrides made by the core framework. Each part of the core framework is universal and designed to work on every supported system.</p>
+
+<p>The cascades for the <code>/js</code>, <code>/css</code> and <code>/layouts</code> folders are defined in the theme's <code>config.php</code>. If you want to register another folder in the cascade, you can do so here.</p>
+
+<h2>Layout overrides</h2>
+
+<p>To customize the general theme layout, you need to override the <code>/layouts/theme.php</code>. To do so, create the <code>/styles/STYLE-NAME/layouts</code> directory, copy the file in there and start adding your own PHP code.</p>
+
+<p>This way you can also override system files. For example, just take the Joomla article layout <code>/warp/systems/joomla/layouts/com_content/article/default.php</code> and copy it to your style folder <code>/styles/STYLE-NAME/layouts/com_content/article/default.php</code> and modify it. Now your modified article layout file will be used instead of the default system layout. The same applies for WordPress files.</p>
+
+<h2>Add your own CSS</h2>
+
+<p>There are several ways of adding your own custom CSS to a Warp theme. You can use the Customizer to change most aspects of the theme without having to write any CSS. Keep in mind that your style will only be shown in the Customizer, if there is a <code>style.less</code> file inside the style's folder. When you use the Customizer, changes will be saved in the <code>style.less</code> file. Together with the theme LESS files it will be compiled into the <code>/css/theme.css</code> file and override any customizations you may have done.</p>
+
+<h3>Add custom CSS</h3>
+
+<p>You can use the Customizer and also add your own CSS by creating a <code>custom.css</code> file inside the <code>/css</code> folder for the related style. That way your CSS won't be overwritten when you save changes in the Customizer.</p>
+
+<p>If you need to add another <code>FILE.css</code> to the template, ie. you want to do like (standard Joomla! way to add a custom CSS file):</p>
+
+<pre><code><link rel="stylesheet" href="<?php echo $this->baseurl ?>/templates/<?php echo $this->template; ?>/css/MY-CSS.css" type="text/css" /></code></pre>
+
+<p>you can proceed as per 'Add custom JavaScript' below:</p>
+
+<p>4. Put your own additional CSS file in the <code>/styles/STYLE-NAME/css/MY-CSS.css</code> directory.</p>
+
+<pre><code>&lt;?php
+
+require(__DIR__.'/../../../layouts/theme.config.php');
+
+// add css
+$this['asset']->addFile('css', 'css:MY-CSS.css');</code></pre>
+
+<h3>Add CSS without using LESS and the Customizer</h3>
+
+<p>If you are not planning to use the Customizer at all, just duplicate an existing style and delete the <code>style.less</code> file. Now the <code>/css/theme.css</code> will no longer be overwritten when compiling LESS. You can write customizations directly in the the <code>theme.css</code> file.</p>
+
+<h2>Add custom JavaScript</h2>
+
+<p>The configuration file <code>/layouts/theme.config.php</code> initializes all PHP classes and loads the necessary JavaScript. If you need to load custom JavaScript files, this is the place to do it. Enabled compression and Data URI will be applied automatically to all files you add here.</p>
+
+<ol>
+  <li>Create a new file <code>/styles/STYLE-NAME/layouts/theme.config.php</code>.</li>
+  <li>Load the original file through PHP by using the <em>require</em> function.</li>
+  <li>Then add your JavaScript file to the asset collection, so it will be added automatically to the template header.</li>
+  <li>Put your own custom JavaScript file in the <code>/styles/STYLE-NAME/js/MY-JS.js</code> directory.</li>
+</ol>
+
+<pre><code>&lt;?php
+
+require(__DIR__.'/../../../layouts/theme.config.php');
+
+// add script
+$this['asset']->addFile('js', 'js:MY-JS.js');</code></pre>
+
+<h2>Custom template files for WordPress</h2>
+
+<p>You can use different layouts for template files, for example pages, by creating files in your theme folder with the name prefix <em>page-</em> followed by the ID or page-slug.</p>
+
+<ul class="bullet">
+  <li><code>page-{id}.php</code></li>
+  <li><code>page-{slug}.php</code></li>
+</ul>
+
+<p>Let's say you want custom content for a page with the <em>ID 80</em>. Create a file in your theme folder and name it <code>page-80.php</code> with the following content.</p>
+
+<pre>
+<code>&lt;?php get_header(); ?&gt;
+
+Put your content here...
+
+&lt;?php get_footer(); ?&gt;</code>
+</pre>
